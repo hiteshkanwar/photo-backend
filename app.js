@@ -41,6 +41,7 @@ async function getPhotoData(query, per_page) {
 
   res["photos"] = updatedData;
   res["page"] = per_page;
+  res["total_results"] = data1.total_results;
   res["per_page"] = updatedData.length;
   res["next_page"] = `localhost:8000?query=${query}&per_page=${
     parseInt(per_page) + 1

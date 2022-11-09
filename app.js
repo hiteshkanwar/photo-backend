@@ -1,8 +1,25 @@
 import express from "express";
 import fetch from "node-fetch";
+import cors from "cors";
+import {
+  PEXEL_URL,
+  UNSPLASH_URL,
+  PEXEL_HEADER,
+  UNSPLASH_CLIENT_ID,
+} from "./variable.js";
 
 // Express Initialize
 const app = express();
+
+const allowedOrigins = ["http://localhost:3000"];
+
+const options = {
+  origin: allowedOrigins,
+};
+
+app.use(cors(options));
+
+app.use(express.json());
 
 app.get("/", async (req, res) => {
   const result = await getPhotoData(req.query.query, req.query.per_page);
@@ -11,11 +28,11 @@ app.get("/", async (req, res) => {
 });
 
 async function getPhotoData(query, per_page) {
-  const url1 = `https://api.pexels.com/v1/search?query=${query}&per_page=${5}`;
-  const url2 = `https://api.unsplash.com/photos/random?query=${query}&client_id=q4EWlt63wsAkbIbsZm1b8oggduoL6OmrJ-iDEnKhwCo&count=4`;
+  const url1 = `${PEXEL_URL}search?page=${per_page}&query=${query}&per_page=${5}`;
+  const url2 = `${UNSPLASH_URL}photos/random?query=${query}&client_id=${UNSPLASH_CLIENT_ID}&count=4`;
 
   const headers = {
-    Authorization: "563492ad6f91700001000001429a36bd1bb24659933594c131ab9fdc",
+    Authorization: `${PEXEL_HEADER}`,
   };
 
   const responses = await Promise.all([fetch(url1, { headers }), fetch(url2)]);
@@ -32,10 +49,6 @@ async function getPhotoData(query, per_page) {
   );
 
   const updatedData = data1.photos.concat(newData2);
-
-  console.log(222, newData2.length);
-
-  console.log(111, updatedData);
 
   let res = {};
 
